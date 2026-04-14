@@ -1,0 +1,26 @@
+{
+	"name": "odin-blog-backend",
+	"version": "1.0.0",
+	"description": "A simple blog API",
+	"main": "app.js",
+	"scripts": {
+		"dev": "nodemon app.js",
+		"prisma-migrate": "npx prisma migrate dev --name init",
+		"prisma-generate": "npx prisma generate",
+		"prisma-studio": "npx prisma studio --config ./prisma.config.js",
+		"prisma-init": "npx prisma init --datasource-provider postgresql --output ../generated/prisma --generator-provider prisma-client-js"
+	},
+	"keywords": [],
+	"author": "Kelvin Ochubili",
+	"license": "ISC",
+	"type": "module",
+	"dependencies": {
+		"@prisma/adapter-pg": "^7.7.0",
+		"@prisma/client": "^7.7.0",
+		"bcryptjs": "^3.0.3",
+		"dotenv": "^17.4.2",
+		"express": "^5.2.1",
+		"pg": "^8.20.0",
+		"prisma": "^7.7.0"
+	}
+}
