@@ -53,4 +53,29 @@ const createPost = [
 	},
 ];
 
-export { createPost };
+const getPosts = [
+	authMiddleware,
+	async (req, res) => {
+		try {
+			const posts = await prisma.post.findMany({
+				where: {
+					authorId: req.user.id,
+				},
+				omit: {
+					authorId: true,
+				},
+			});
+
+			res.status(200).json({
+				message: 'Posts fetched successfully',
+				posts,
+			});
+		} catch (error) {
+			res.status(500).json({
+				error: error.message || 'Something went wrong. Try again later.',
+			});
+		}
+	},
+];
+
+export { createPost, getPosts };
