@@ -11,7 +11,7 @@ const router = Router();
 
 router.post('/', createPost);
 router.get('/', getPosts);
-router.get('/:postId', getSinglepost);
+router.get('/:slug', getSinglepost);
 router.patch('/:postId', editPost);
 router.delete('/:postId', deletePost);
 

@@ -20,23 +20,11 @@ const createPost = [
 		const { title, content } = matchedData(req);
 
 		try {
-			// check if slug exists
-			let slug = slugify(title);
-			const slugs = await prisma.post.findMany({
-				where: {
-					slug,
-				},
-			});
-
-			if (slugs.length > 0) {
-				slug += `-${slugs.length + 1}`;
-			}
-
 			const newPost = await prisma.post.create({
 				data: {
 					title,
 					content,
-					slug,
+					slug: slugify(`${title}-${Date.now()}`),
 					authorId: req.user.id,
 				},
 			});
@@ -53,59 +41,46 @@ const createPost = [
 	},
 ];
 
-const getPosts = [
-	authMiddleware,
-	async (req, res) => {
-		try {
-			const posts = await prisma.post.findMany({
-				where: {
-					authorId: req.user.id,
-				},
-				omit: {
-					authorId: true,
-				},
-			});
+const getPosts = async (req, res) => {
+	try {
+		const posts = await prisma.post.findMany();
 
-			res.status(200).json({
-				message: 'Posts fetched successfully',
-				posts,
-			});
-		} catch (error) {
-			res.status(500).json({
-				error: error.message || 'Something went wrong. Try again later.',
-			});
+		res.status(200).json({
+			message: 'Posts fetched successfully',
+			posts,
+		});
+	} catch (error) {
+		res.status(500).json({
+			error: error.message || 'Something went wrong. Try again later.',
+		});
+	}
+};
+
+const getSinglepost = async (req, res) => {
+	try {
+		const slug = req.params.slug;
+
+		const post = await prisma.post.findUnique({
+			where: { slug },
+			omit: {
+				authorId: true,
+			},
+		});
+
+		if (!post) {
+			return res.status(404).json({ error: 'Post not found' });
 		}
-	},
-];
 
-const getSinglepost = [
-	authMiddleware,
-	async (req, res) => {
-		try {
-			const postId = req.params.postId;
-
-			const post = await prisma.post.findUnique({
-				where: { id: postId, authorId: req.user.id },
-				omit: {
-					authorId: true,
-				},
-			});
-
-			if (!post) {
-				return res.status(404).json({ error: 'Post not found' });
-			}
-
-			res.status(200).json({
-				message: 'Post fetched successfully',
-				post,
-			});
-		} catch (error) {
-			res.status(500).json({
-				error: error.message || 'Something went wrong. Try again later.',
-			});
-		}
-	},
-];
+		res.status(200).json({
+			message: 'Post fetched successfully',
+			post,
+		});
+	} catch (error) {
+		res.status(500).json({
+			error: error.message || 'Something went wrong. Try again later.',
+		});
+	}
+};
 
 const editPost = [
 	authMiddleware,
@@ -164,7 +139,7 @@ const deletePost = [
 			});
 
 			if (!post) {
-				return res.status(404).json({ error: 'Post not found' });
+				return res.status(404).json({ error: 'Post may have already been deleted' });
 			}
 
 			// check if post belongs to author
