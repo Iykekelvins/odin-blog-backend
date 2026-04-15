@@ -31,7 +31,7 @@ const createPost = [
 
 			res.status(201).json({
 				message: 'Post created successfully',
-				postId: newPost.id,
+				post: newPost,
 			});
 		} catch (error) {
 			res.status(500).json({
