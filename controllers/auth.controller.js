@@ -5,7 +5,7 @@ import { matchedData, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const signupController = [
+const signup = [
 	validateSignup,
 	async (req, res) => {
 		const errors = validationResult(req);
@@ -40,7 +40,7 @@ const signupController = [
 	},
 ];
 
-const loginController = async (req, res) => {
+const login = async (req, res) => {
 	const { email, password } = req.body;
 
 	try {
@@ -93,4 +93,4 @@ const loginController = async (req, res) => {
 	}
 };
 
-export { signupController, loginController };
+export { signup, login };
