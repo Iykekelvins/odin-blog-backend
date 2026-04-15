@@ -1,7 +1,8 @@
 export const roleMiddleware = (req, res, next) => {
-	const acceptedRoles = ['AUTHOR', 'ADMIN'];
-	if (!acceptedRoles.includes(req.user.role)) {
-		return res.status(403).json({ error: 'Forbidden - You cannot create posts!' });
+	if (req.user.role === 'ADMIN') {
+		next();
 	}
-	next();
+	return res
+		.status(403)
+		.json({ error: 'Forbidden - You cannot perform this action!' });
 };

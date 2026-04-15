@@ -84,6 +84,7 @@ const getSinglepost = async (req, res) => {
 
 const editPost = [
 	authMiddleware,
+	roleMiddleware,
 	async (req, res) => {
 		const { title, content } = req.body;
 
@@ -96,13 +97,6 @@ const editPost = [
 
 			if (!post) {
 				return res.status(404).json({ error: 'Post not found' });
-			}
-
-			// check if post belongs to author
-			if (post.authorId !== req.user.id) {
-				return res
-					.status(403)
-					.json({ error: 'Forbidden - You cannot edit this post' });
 			}
 
 			const updatedPost = await prisma.post.update({
@@ -130,23 +124,17 @@ const editPost = [
 
 const deletePost = [
 	authMiddleware,
+	roleMiddleware,
 	async (req, res) => {
 		try {
 			const postId = req.params.postId;
 
 			const post = await prisma.post.findUnique({
-				where: { id: postId, authorId: req.user.id },
+				where: { id: postId },
 			});
 
 			if (!post) {
 				return res.status(404).json({ error: 'Post may have already been deleted' });
-			}
-
-			// check if post belongs to author
-			if (post.authorId !== req.user.id) {
-				return res
-					.status(403)
-					.json({ error: 'Forbidden - You cannot delete this post' });
 			}
 
 			await prisma.post.delete({
