@@ -34,7 +34,7 @@ const signupController = [
 			});
 		} catch (error) {
 			res.status(500).json({
-				error: error.message,
+				error: error.message || 'Something went wrong. Try again later.',
 			});
 		}
 	},
@@ -88,7 +88,7 @@ const loginController = async (req, res) => {
 		});
 	} catch (error) {
 		res.status(500).json({
-			error: 'Something went wrong. Try again later.',
+			error: error.message || 'Something went wrong. Try again later.',
 		});
 	}
 };
